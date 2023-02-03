@@ -5,5 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     restart: unless-stopped
+    environment:
+      - PORT
+      - COUNTER
     ports:
-      - 5556:5556
+      - $PORT:$PORT
