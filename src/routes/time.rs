@@ -25,7 +25,7 @@ async fn time(counter: Data<Mutex<usize>>) -> Result<HttpResponse, LockError> {
                     return Ok(HttpResponse::Ok().body(format_time(run.igt)));
                 }
             }
-            Ok(HttpResponse::NoContent().body("Not Found"))
+            Ok(HttpResponse::Ok().body("Keine Zeit"))
         }
         Err(error) => Ok(HttpResponse::Ok().body(error.to_string())),
     }
