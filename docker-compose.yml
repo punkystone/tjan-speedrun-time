@@ -4,11 +4,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: tjan-speedrun
     restart: unless-stopped
     environment:
       - PORT
       - COUNTER
-    ports:
-      - $PORT:$PORT
-
+    expose:
+      - $PORT
+    networks:
+      - main-network
+networks:
+  main-network:
+    name: main-network
+    external: true
   
