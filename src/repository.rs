@@ -17,7 +17,7 @@ pub async fn get_leaderboard(page: usize) -> Result<LeaderBoard, GetLeaderboardE
     let client = Client::builder().build::<_, hyper::Body>(HttpsConnector::new());
 
     let uri = format!(
-        "https://www.speedrun.com/api/v2/game/getLeaderboard?_r={}",
+        "https://www.speedrun.com/api/v2/GetGameLeaderboard?_r={}",
         general_purpose::STANDARD_NO_PAD.encode(request)
     )
     .parse::<Uri>()?;
