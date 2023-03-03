@@ -1,0 +1,69 @@
+{
+  "version": 0,
+  "root_name": "tjan_speedrun_time",
+  "workspace_crates": {
+    "tjan_speedrun_time": {
+      "full_path": "/home/kevin/tjan-speedrun-time/Cargo.toml",
+      "dependencies": {
+        "hyper": {
+          "original_features": [
+            "http1",
+            "tcp",
+            "socket2",
+            "client"
+          ],
+          "successfully_removed_features": [
+            "http1",
+            "client",
+            "tcp",
+            "socket2"
+          ],
+          "unsuccessfully_removed_features": []
+        },
+        "twitch_api2": {
+          "original_features": [
+            "twitch_oauth2",
+            "serde_json",
+            "reqwest",
+            "helix",
+            "client"
+          ],
+          "successfully_removed_features": [
+            "client",
+            "serde_json",
+            "twitch_oauth2"
+          ],
+          "unsuccessfully_removed_features": [
+            "reqwest",
+            "helix"
+          ]
+        },
+        "serde": {
+          "original_features": [
+            "derive",
+            "serde_derive"
+          ],
+          "successfully_removed_features": [
+            "derive",
+            "serde_derive"
+          ],
+          "unsuccessfully_removed_features": []
+        },
+        "actix-web": {
+          "original_features": [
+            "macros",
+            "actix-macros",
+            "actix-web-codegen"
+          ],
+          "successfully_removed_features": [
+            "actix-web-codegen",
+            "actix-macros"
+          ],
+          "unsuccessfully_removed_features": [
+            "macros"
+          ]
+        }
+      }
+    }
+  }
+}
