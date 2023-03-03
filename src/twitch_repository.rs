@@ -107,7 +107,7 @@ impl TwitchRepository<'_> {
 
     pub async fn get_title(&self) -> Result<Option<String>, GetTitleError> {
         if let Some(token) = &self.token {
-            let user_id = self.get_user_id(String::from("punkystone")).await?;
+            let user_id = self.get_user_id(String::from("tjan")).await?;
             if let Some(user_id) = user_id {
                 let request = GetChannelInformationRequest::builder()
                     .broadcaster_id(user_id)
@@ -128,7 +128,7 @@ impl TwitchRepository<'_> {
 
     pub async fn set_title(&self, title: String) -> Result<(), SetTitleError> {
         if let Some(token) = &self.token {
-            let user_id = self.get_user_id(String::from("punkystone")).await?;
+            let user_id = self.get_user_id(String::from("tjan")).await?;
 
             if let Some(user_id) = user_id {
                 let request = ModifyChannelInformationRequest::builder()
