@@ -9,6 +9,11 @@ services:
     environment:
       - PORT
       - COUNTER
+      - CLIENT_ID
+      - CLIENT_SECRET
+      - REDIRECT_URI
+      - ACCESS_TOKEN
+      - REFRESH_TOKEN
     expose:
       - $PORT
     networks:
@@ -17,4 +22,3 @@ networks:
   main-network:
     name: main-network
     external: true
-  

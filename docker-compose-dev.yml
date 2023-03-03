@@ -8,5 +8,10 @@ services:
     environment:
       - PORT
       - COUNTER
+      - CLIENT_ID
+      - CLIENT_SECRET
+      - REDIRECT_URI
+      - ACCESS_TOKEN
+      - REFRESH_TOKEN
     ports:
       - $PORT:$PORT
