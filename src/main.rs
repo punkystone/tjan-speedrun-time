@@ -15,7 +15,6 @@ use errors::place_query_error::PlaceQueryError;
 use routes::{
     auth::auth, decrement_place::decrement_place, place::place, time::time, validate::validate,
 };
-use std::sync::Mutex as StdMutex;
 use tokio::sync::Mutex;
 use twitch_repository::TwitchRepository;
 
@@ -34,7 +33,7 @@ async fn main() -> std::io::Result<()> {
             if let Err(error) = twitch_repository.lock().await.init_token().await {
                 println!("{error}");
             }
-            let counter = Data::new(StdMutex::<usize>::new(env.counter));
+            let counter = Data::new(Mutex::<usize>::new(env.counter));
             let port = env.port;
             let env = Data::new(env);
             HttpServer::new(move || {

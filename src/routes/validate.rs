@@ -14,7 +14,7 @@ async fn validate(
 ) -> HttpResponse {
     if let (Some(code), Some(_)) = (&twitch_response.code, &twitch_response.scope) {
         if let Err(error) = twitch_repository.lock().await.get_token(code).await {
-            println!("Validation Error: {:?}", error);
+            println!("Validation Error: {error:?}");
         }
     } else if twitch_response.error.is_some() && twitch_response.error_description.is_some() {
         println!(
