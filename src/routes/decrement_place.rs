@@ -1,15 +1,15 @@
-use std::sync::Mutex;
-
 use actix_web::{post, web::Data, HttpResponse};
+use std::sync::Mutex as StdMutex;
+use tokio::sync::Mutex;
 
 use crate::{errors::lock_error::LockError, twitch_repository::TwitchRepository};
 
 #[post("/place/decrement")]
 async fn decrement_place(
-    counter: Data<Mutex<usize>>,
+    counter: Data<StdMutex<usize>>,
     twitch_repository: Data<Mutex<TwitchRepository<'_>>>,
 ) -> Result<HttpResponse, LockError> {
-    let repository = twitch_repository.lock()?;
+    let repository = twitch_repository.lock().await;
     if let Ok(Some(title)) = repository.get_title().await {
         let old_value = *counter.lock()?;
         *counter.lock()? -= 1;

@@ -9,6 +9,7 @@ pub struct Env {
     pub redirect_uri: String,
     pub access_token: Option<String>,
     pub refresh_token: Option<String>,
+    pub channel: String,
 }
 impl Env {
     pub fn check_variables() -> Result<Env, EnvironmentVariablesError> {
@@ -30,6 +31,7 @@ impl Env {
             } else {
                 None
             },
+            channel: std::env::var("CHANNEL")?,
         })
     }
 }

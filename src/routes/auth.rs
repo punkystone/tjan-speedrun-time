@@ -4,7 +4,7 @@ use crate::env::Env;
 
 #[get("/auth")]
 async fn auth(env: Data<Env> ) -> impl Responder {
-    HttpResponse::MovedPermanently()
+    HttpResponse::TemporaryRedirect()
         .append_header((
             "Location",
             format!(

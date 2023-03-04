@@ -16,7 +16,8 @@ use twitch_api2::{
 use crate::{
     errors::twitch::{
         get_title_error::GetTitleError, get_token_error::GetTokenError,
-        get_user_id_error::GetUserIdError, set_title_error::SetTitleError, token_error::TokenError,
+        get_user_id_error::GetUserIdError, init_token_error::InitTokenError,
+        set_title_error::SetTitleError, token_error::TokenError,
     },
     model::oauth_response::OAuthResponse,
 };
@@ -29,6 +30,7 @@ pub struct TwitchRepository<'a> {
     token: Option<UserToken>,
     access_token: Option<String>,
     refresh_token: Option<String>,
+    channel: String,
 }
 
 impl TwitchRepository<'_> {
@@ -38,6 +40,7 @@ impl TwitchRepository<'_> {
         redirect_uri: String,
         access_token: Option<String>,
         refresh_token: Option<String>,
+        channel: String,
     ) -> Self {
         Self {
             client: HelixClient::default(),
@@ -47,9 +50,10 @@ impl TwitchRepository<'_> {
             token: None,
             access_token,
             refresh_token,
+            channel,
         }
     }
-    pub async fn init_token(&mut self) {
+    pub async fn init_token(&mut self) -> Result<(), InitTokenError> {
         if let (Some(access_token), Some(refresh_token)) = (&self.access_token, &self.refresh_token)
         {
             self.token = Some(
@@ -59,12 +63,12 @@ impl TwitchRepository<'_> {
                     RefreshToken::new(refresh_token),
                     ClientSecret::from(self.client_secret.clone()),
                 )
-                .await
-                .unwrap(),
-            )
+                .await?,
+            );
         } else {
-            self.token = None
+            self.token = None;
         }
+        Ok(())
     }
 
     pub async fn get_token(&mut self, code: &String) -> Result<(), GetTokenError> {
@@ -107,7 +111,9 @@ impl TwitchRepository<'_> {
 
     pub async fn get_title(&self) -> Result<Option<String>, GetTitleError> {
         if let Some(token) = &self.token {
-            let user_id = self.get_user_id(String::from("tjan")).await?;
+            let user_id = self
+                .get_user_id(String::from(self.channel.to_owned()))
+                .await?;
             if let Some(user_id) = user_id {
                 let request = GetChannelInformationRequest::builder()
                     .broadcaster_id(user_id)
@@ -128,7 +134,7 @@ impl TwitchRepository<'_> {
 
     pub async fn set_title(&self, title: String) -> Result<(), SetTitleError> {
         if let Some(token) = &self.token {
-            let user_id = self.get_user_id(String::from("tjan")).await?;
+            let user_id = self.get_user_id(self.channel.to_owned()).await?;
 
             if let Some(user_id) = user_id {
                 let request = ModifyChannelInformationRequest::builder()

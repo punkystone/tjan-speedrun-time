@@ -5,8 +5,6 @@ mod repository;
 mod routes;
 mod twitch_repository;
 
-use std::sync::Mutex;
-
 use actix_web::{
     middleware::{self},
     web::{Data, QueryConfig},
@@ -17,6 +15,8 @@ use errors::place_query_error::PlaceQueryError;
 use routes::{
     auth::auth, decrement_place::decrement_place, place::place, time::time, validate::validate,
 };
+use std::sync::Mutex as StdMutex;
+use tokio::sync::Mutex;
 use twitch_repository::TwitchRepository;
 
 #[actix_web::main]
@@ -29,9 +29,12 @@ async fn main() -> std::io::Result<()> {
                 env.redirect_uri.to_owned(),
                 env.access_token.to_owned(),
                 env.refresh_token.to_owned(),
+                env.channel.to_owned(),
             )));
-            twitch_repository.lock().unwrap().init_token().await;
-            let counter = Data::new(Mutex::<usize>::new(env.counter));
+            if let Err(error) = twitch_repository.lock().await.init_token().await {
+                println!("{error}");
+            }
+            let counter = Data::new(StdMutex::<usize>::new(env.counter));
             let port = env.port;
             let env = Data::new(env);
             HttpServer::new(move || {
