@@ -1,6 +1,7 @@
 use twitch_api2::helix::ClientRequestError;
 
 use super::{get_user_id_error::GetUserIdError, token_error::TokenError};
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum SetTitleError {
     TokenError(TokenError),
@@ -12,10 +13,10 @@ pub enum SetTitleError {
 impl std::fmt::Display for SetTitleError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            SetTitleError::TokenError(e) => write!(f, "{}", e),
+            SetTitleError::TokenError(e) => write!(f, "{e}"),
             SetTitleError::RequestError => write!(f, "Twitch Api Request Error"),
             SetTitleError::UserNotFoundError => write!(f, "User not found"),
-            SetTitleError::UserIdError(e) => write!(f, "{}", e),
+            SetTitleError::UserIdError(e) => write!(f, "{e}"),
         }
     }
 }

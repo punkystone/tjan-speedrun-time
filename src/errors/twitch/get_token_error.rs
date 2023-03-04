@@ -4,7 +4,7 @@ use std::{
 };
 
 use twitch_api2::{client::CompatError, twitch_oauth2::tokens::errors::ValidationError};
-
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum GetTokenError {
     BuildRequestError,

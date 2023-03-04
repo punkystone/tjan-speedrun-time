@@ -11,8 +11,7 @@ use crate::{
 
 pub async fn get_leaderboard(page: usize) -> Result<LeaderBoard, GetLeaderboardError> {
     let request = format!(
-        "{{\"params\":{{\"gameId\":\"j1npme6p\",\"categoryId\":\"mkeyl926\",\"values\":[{{\"variableId\":\"r8rg67rn\",\"valueIds\":[\"21d4zvp1\"]}},{{\"variableId\":\"wl33kewl\",\"valueIds\":[\"4qye4731\"]}}],\"timer\":2,\"regionIds\":[],\"platformIds\":[],\"video\":0,\"obsolete\":0}},\"page\":{},\"vary\":1674993674}}",
-        page
+        "{{\"params\":{{\"gameId\":\"j1npme6p\",\"categoryId\":\"mkeyl926\",\"values\":[{{\"variableId\":\"r8rg67rn\",\"valueIds\":[\"21d4zvp1\"]}},{{\"variableId\":\"wl33kewl\",\"valueIds\":[\"4qye4731\"]}}],\"timer\":2,\"regionIds\":[],\"platformIds\":[],\"video\":0,\"obsolete\":0}},\"page\":{page},\"vary\":1674993674}}",
     );
     let client = Client::builder().build::<_, hyper::Body>(HttpsConnector::new());
 
