@@ -1,34 +1,42 @@
-use twitch_api2::helix::ClientRequestError;
+use actix_web::error::HttpError;
 
-use super::{get_user_id_error::GetUserIdError, token_error::TokenError};
+use super::{
+    build_request_error::BuildRequestError, request_error::RequestError,
+    response_parse_error::ResponseParseError, response_to_string_error::ResponseToStringError,
+};
 #[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum GetTitleError {
-    TokenError(TokenError),
-    UserIdError(GetUserIdError),
-    UserNotFoundError,
-    RequestError,
+    MissingUserIdError,
+    MissingTokenError,
+    BuildRequestError(BuildRequestError),
+    RequestError(RequestError),
+    ResponseToStringError(ResponseToStringError),
+    ResponseParseError(ResponseParseError),
+    UnauthorizedError,
+    UnknownTwitchResponseError,
 }
 
-impl std::fmt::Display for GetTitleError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            GetTitleError::TokenError(e) => write!(f, "{e}"),
-            GetTitleError::UserIdError(e) => write!(f, "{e}"),
-            GetTitleError::UserNotFoundError => write!(f, "User not found"),
-            GetTitleError::RequestError => write!(f, "Twitch Api Request Error"),
-        }
+impl From<HttpError> for GetTitleError {
+    fn from(error: HttpError) -> Self {
+        Self::BuildRequestError(error.into())
     }
 }
 
-impl From<GetUserIdError> for GetTitleError {
-    fn from(e: GetUserIdError) -> Self {
-        GetTitleError::UserIdError(e)
+impl From<hyper::Error> for GetTitleError {
+    fn from(error: hyper::Error) -> Self {
+        Self::RequestError(error.into())
     }
 }
 
-impl From<ClientRequestError<reqwest::Error>> for GetTitleError {
-    fn from(_: ClientRequestError<reqwest::Error>) -> Self {
-        GetTitleError::RequestError
+impl From<ResponseToStringError> for GetTitleError {
+    fn from(error: ResponseToStringError) -> Self {
+        Self::ResponseToStringError(error)
+    }
+}
+
+impl From<serde_json::Error> for GetTitleError {
+    fn from(error: serde_json::Error) -> Self {
+        Self::ResponseParseError(error.into())
     }
 }

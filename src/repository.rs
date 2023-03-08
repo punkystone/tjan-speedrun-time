@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use base64::{engine::general_purpose, Engine};
-use hyper::{body::to_bytes, Client, Uri};
+use hyper::{body::to_bytes, Uri, Client};
 use hyper_tls::HttpsConnector;
 
 use crate::{

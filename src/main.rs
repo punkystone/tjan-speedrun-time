@@ -11,7 +11,7 @@ use actix_web::{
     App, HttpServer,
 };
 use env::Env;
-use errors::place_query_error::PlaceQueryError;
+use errors::{place_query_error::PlaceQueryError, twitch::validation_error::ValidationError};
 use routes::{
     auth::auth, decrement_place::decrement_place, place::place, time::time, validate::validate,
 };
@@ -28,11 +28,36 @@ async fn main() -> std::io::Result<()> {
                 env.redirect_uri.to_owned(),
                 env.access_token.to_owned(),
                 env.refresh_token.to_owned(),
-                env.channel.to_owned(),
             )));
-            if let Err(error) = twitch_repository.lock().await.init_token().await {
-                println!("{error}");
+            {
+                let mut twitch_repository = twitch_repository.lock().await;
+                match twitch_repository.validate().await {
+                    Ok(valid) => {
+                        if !valid {
+                            println!("Initial Token invalid");
+                            match twitch_repository.refresh_token().await {
+                                Ok(_) => println!("Token refreshed"),
+                                Err(e) => println!("Token refresh failed: {e:?}"),
+                            }
+                        } else {
+                            println!("Initial Token valid");
+                        }
+                    }
+                    Err(ValidationError::NoTokenError) => println!("No Token supplied"),
+                    Err(e) => println!("Token validation Failed: {e:?}"),
+                }
+
+                match twitch_repository.set_user_id(&env.channel).await {
+                    Ok(_) => {
+                        println!(
+                            "User id set for {}: {:?}",
+                            env.channel, twitch_repository.user_id
+                        );
+                    }
+                    Err(e) => println!("Failed to get user id: {e:?}"),
+                }
             }
+
             let counter = Data::new(Mutex::<usize>::new(env.counter));
             let port = env.port;
             let env = Data::new(env);
