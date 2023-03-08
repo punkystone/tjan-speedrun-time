@@ -48,13 +48,13 @@ impl TwitchRepository {
             let request = Request::builder()
                 .method(Method::GET)
                 .uri("https://id.twitch.tv/oauth2/validate")
-                .header("Authorization", format!("OAuth {}", access_token))
+                .header("Authorization", format!("OAuth {access_token}"))
                 .body(Body::empty())?;
 
             let response = self.client.request(request).await?;
             Ok(response.status() == StatusCode::OK)
         } else {
-            return Err(ValidationError::NoTokenError);
+            Err(ValidationError::NoTokenError)
         }
     }
 
@@ -78,7 +78,7 @@ impl TwitchRepository {
             let response = self.client.request(request).await?;
             let status_code = response.status();
             if status_code == StatusCode::BAD_REQUEST {
-                return Err(RefreshTokenError::InvalidRefreshTokenError);
+                Err(RefreshTokenError::InvalidRefreshTokenError)
             } else if status_code == StatusCode::OK {
                 let response_string = Self::response_to_string(response).await?;
                 let oauth_token = serde_json::from_str::<OAuthResponse>(&response_string)?;
@@ -127,7 +127,7 @@ impl TwitchRepository {
     pub async fn get_title(&mut self) -> Result<Option<String>, GetTitleError> {
         let title = self.get_title_raw().await;
         if let Err(GetTitleError::UnauthorizedError) = title {
-            if let Err(_) = self.refresh_token().await {
+            if self.refresh_token().await.is_err() {
                 return Err(GetTitleError::UnauthorizedError);
             }
             return self.get_title_raw().await;
@@ -144,7 +144,7 @@ impl TwitchRepository {
                         "https://api.twitch.tv/helix/channels?broadcaster_id={}",
                         user_id
                     ))
-                    .header("Authorization", format!("Bearer {}", access_token))
+                    .header("Authorization", format!("Bearer {access_token}",))
                     .header("Client-Id", &self.client_id)
                     .body(Body::empty())?;
 
@@ -158,7 +158,7 @@ impl TwitchRepository {
                     Ok(channel_information_response
                         .data
                         .first()
-                        .map(|channel| channel.title.to_owned()))
+                        .map(|channel| channel.title.clone()))
                 } else if status == StatusCode::UNAUTHORIZED {
                     Err(GetTitleError::UnauthorizedError)
                 } else {
@@ -175,7 +175,7 @@ impl TwitchRepository {
     pub async fn set_title(&mut self, title: String) -> Result<(), SetTitleError> {
         let title_response = self.set_title_raw(&title).await;
         if let Err(SetTitleError::UnauthorizedError) = title_response {
-            if let Err(_) = self.refresh_token().await {
+            if self.refresh_token().await.is_err() {
                 return Err(SetTitleError::UnauthorizedError);
             }
             return self.set_title_raw(&title).await;
@@ -192,10 +192,10 @@ impl TwitchRepository {
                         "https://api.twitch.tv/helix/channels?broadcaster_id={}",
                         user_id
                     ))
-                    .header("Authorization", format!("Bearer {}", access_token))
+                    .header("Authorization", format!("Bearer {access_token}"))
                     .header("Client-Id", &self.client_id)
                     .header("Content-Type", "application/json")
-                    .body(Body::from(format!("{{\"title\": \"{}\"}}", title)))?;
+                    .body(Body::from(format!("{{\"title\": \"{title}\"}}")))?;
 
                 let response = self.client.request(request).await?;
                 let status = response.status();
@@ -204,9 +204,6 @@ impl TwitchRepository {
                 } else if status == StatusCode::UNAUTHORIZED {
                     Err(SetTitleError::UnauthorizedError)
                 } else {
-                    let response_string = Self::response_to_string(response).await.unwrap();
-                    println!("Response: {}", response_string);
-                    println!("Unknown response: {}", status);
                     Err(SetTitleError::UnknownTwitchResponseError)
                 }
             } else {
@@ -225,7 +222,7 @@ impl TwitchRepository {
                     "https://api.twitch.tv/helix/users?login={}",
                     username
                 ))
-                .header("Authorization", format!("Bearer {}", access_token))
+                .header("Authorization", format!("Bearer {access_token}"))
                 .header("Client-Id", &self.client_id)
                 .body(Body::empty())?;
 
@@ -235,7 +232,7 @@ impl TwitchRepository {
                 let response_string = Self::response_to_string(response).await?;
 
                 let user_id = serde_json::from_str::<GetUsersResponse>(&response_string)?;
-                self.user_id = user_id.data.first().map(|user| user.id.to_owned());
+                self.user_id = user_id.data.first().map(|user| user.id.clone());
                 Ok(())
             } else if status == StatusCode::UNAUTHORIZED {
                 Err(GetUserIdError::UnauthorizedError)
@@ -243,7 +240,7 @@ impl TwitchRepository {
                 Err(GetUserIdError::UnknownTwitchResponseError)
             }
         } else {
-            return Err(GetUserIdError::MissingTokenError);
+            Err(GetUserIdError::MissingTokenError)
         }
     }
 

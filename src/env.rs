@@ -12,6 +12,7 @@ pub struct Env {
     pub channel: String,
 }
 impl Env {
+    #[allow(clippy::missing_errors_doc)]
     pub fn check_variables() -> Result<Env, EnvironmentVariablesError> {
         let access_token = std::env::var("ACCESS_TOKEN")?;
         let refresh_token = std::env::var("REFRESH_TOKEN")?;

@@ -1,6 +1,7 @@
 use actix_web::error::HttpError;
 
 use super::{build_request_error::BuildRequestError, request_error::RequestError};
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum ValidationError {
     NoTokenError,

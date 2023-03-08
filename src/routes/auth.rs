@@ -1,7 +1,7 @@
 use actix_web::{get, HttpResponse, Responder, web::Data};
 
 use crate::env::Env;
-
+#[allow(clippy::unused_async)]
 #[get("/auth")]
 async fn auth(env: Data<Env> ) -> impl Responder {
     HttpResponse::TemporaryRedirect()

@@ -6,12 +6,12 @@ use crate::repository::{format_time, get_leaderboard};
 
 #[get("/time")]
 async fn time(counter: Data<Mutex<usize>>) -> HttpResponse {
+    let counter = *counter.lock().await;
     #[allow(
         clippy::cast_precision_loss,
         clippy::cast_sign_loss,
         clippy::cast_possible_truncation
     )]
-    let counter = *counter.lock().await;
     let mut page = ((counter / 200) as f64).ceil() as usize;
     if counter % 200 != 0 {
         page += 1;

@@ -23,24 +23,24 @@ async fn main() -> std::io::Result<()> {
     match Env::check_variables() {
         Ok(env) => {
             let twitch_repository = Data::new(Mutex::new(TwitchRepository::new(
-                env.client_id.to_owned(),
-                env.client_secret.to_owned(),
-                env.redirect_uri.to_owned(),
-                env.access_token.to_owned(),
-                env.refresh_token.to_owned(),
+                env.client_id.clone(),
+                env.client_secret.clone(),
+                env.redirect_uri.clone(),
+                env.access_token.clone(),
+                env.refresh_token.clone(),
             )));
             {
                 let mut twitch_repository = twitch_repository.lock().await;
                 match twitch_repository.validate().await {
                     Ok(valid) => {
-                        if !valid {
+                        if valid {
+                            println!("Initial Token valid");
+                        } else {
                             println!("Initial Token invalid");
                             match twitch_repository.refresh_token().await {
                                 Ok(_) => println!("Token refreshed"),
                                 Err(e) => println!("Token refresh failed: {e:?}"),
                             }
-                        } else {
-                            println!("Initial Token valid");
                         }
                     }
                     Err(ValidationError::NoTokenError) => println!("No Token supplied"),

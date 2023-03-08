@@ -4,6 +4,7 @@ use super::{
     build_request_error::BuildRequestError, request_error::RequestError,
     response_parse_error::ResponseParseError, response_to_string_error::ResponseToStringError,
 };
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum RefreshTokenError {
     BuildRequestError(BuildRequestError),
