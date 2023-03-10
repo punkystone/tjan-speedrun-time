@@ -46,7 +46,7 @@ where
     B: 'static,
 {
     fn response_to_string(
-        response_string: String,
+        response_string: &'static str,
         request: ServiceRequest,
     ) -> LocalBoxFuture<'static, Result<ServiceResponse<EitherBody<B>>, Error>> {
         let (request, _) = request.into_parts();
@@ -78,15 +78,15 @@ where
             match request.headers().get("API-KEY") {
                 Some(api_key) => {
                     let Ok(api_key) = api_key.to_str() else {
-                    return Self::response_to_string("Api Key Invalid".to_owned(), request);
+                    return Self::response_to_string("Api Key Invalid", request);
                 };
 
                     if self.api_key != api_key {
-                        return Self::response_to_string("Api Key Invalid".to_owned(), request);
+                        return Self::response_to_string("Api Key Invalid", request);
                     }
                 }
                 None => {
-                    return Self::response_to_string("Api Key Missing".to_owned(), request);
+                    return Self::response_to_string("Api Key Missing", request);
                 }
             };
         }
