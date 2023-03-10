@@ -141,8 +141,7 @@ impl TwitchRepository {
                 let request = Request::builder()
                     .method(Method::GET)
                     .uri(format!(
-                        "https://api.twitch.tv/helix/channels?broadcaster_id={}",
-                        user_id
+                        "https://api.twitch.tv/helix/channels?broadcaster_id={user_id}",
                     ))
                     .header("Authorization", format!("Bearer {access_token}",))
                     .header("Client-Id", &self.client_id)
@@ -189,8 +188,7 @@ impl TwitchRepository {
                 let request = Request::builder()
                     .method(Method::PATCH)
                     .uri(format!(
-                        "https://api.twitch.tv/helix/channels?broadcaster_id={}",
-                        user_id
+                        "https://api.twitch.tv/helix/channels?broadcaster_id={user_id}",
                     ))
                     .header("Authorization", format!("Bearer {access_token}"))
                     .header("Client-Id", &self.client_id)
@@ -219,8 +217,7 @@ impl TwitchRepository {
             let request = Request::builder()
                 .method(Method::GET)
                 .uri(format!(
-                    "https://api.twitch.tv/helix/users?login={}",
-                    username
+                    "https://api.twitch.tv/helix/users?login={username}",
                 ))
                 .header("Authorization", format!("Bearer {access_token}"))
                 .header("Client-Id", &self.client_id)

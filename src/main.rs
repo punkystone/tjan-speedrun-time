@@ -1,5 +1,7 @@
 pub mod env;
 mod errors;
+
+mod middlewares;
 mod model;
 mod repository;
 mod routes;
@@ -12,6 +14,8 @@ use actix_web::{
 };
 use env::Env;
 use errors::{place_query_error::PlaceQueryError, twitch::validation_error::ValidationError};
+
+use middlewares::api_key_service::ApiKeyService;
 use routes::{
     auth::auth, decrement_place::decrement_place, place::place, time::time, validate::validate,
 };
@@ -71,6 +75,9 @@ async fn main() -> std::io::Result<()> {
                             .add(("Pragma", "no-cache"))
                             .add(("Expires", "0")),
                     )
+                    .wrap(ApiKeyService {
+                        api_key: env.api_key.clone(),
+                    })
                     .app_data(counter.clone())
                     .app_data(env.clone())
                     .app_data(twitch_repository.clone())

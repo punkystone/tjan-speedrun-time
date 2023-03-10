@@ -15,6 +15,7 @@ services:
       - ACCESS_TOKEN
       - REFRESH_TOKEN
       - CHANNEL
+      - API_KEY
     expose:
       - $PORT
     networks:

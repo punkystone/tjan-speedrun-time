@@ -17,6 +17,7 @@ serde_json = { version = "1.0", default-features = false }
 base64 = { version = "0.21.0", default-features = false }
 env_logger = { version = "0.10.0", default-features = false }
 tokio = { version = "1.26.0", default-features = false, features = ["sync"] }
+futures-util = {version="0.3.26", default-features = false }
 
 [profile.release]
 opt-level = 3

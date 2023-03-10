@@ -10,6 +10,7 @@ pub struct Env {
     pub access_token: Option<String>,
     pub refresh_token: Option<String>,
     pub channel: String,
+    pub api_key: String,
 }
 impl Env {
     #[allow(clippy::missing_errors_doc)]
@@ -33,6 +34,7 @@ impl Env {
                 None
             },
             channel: std::env::var("CHANNEL")?,
+            api_key: std::env::var("API_KEY")?,
         })
     }
 }
