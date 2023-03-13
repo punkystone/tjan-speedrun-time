@@ -74,6 +74,7 @@ async fn main() -> std::io::Result<()> {
                     .wrap(
                         middleware::DefaultHeaders::new()
                             .add(("Access-Control-Allow-Origin", "*"))
+                            .add(("Access-Control-Allow-Headers", "API-KEY"))
                             .add(("Cache-Control", "no-cache, no-store, must-revalidate"))
                             .add(("Pragma", "no-cache"))
                             .add(("Expires", "0")),
