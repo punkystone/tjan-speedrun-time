@@ -9,6 +9,7 @@ use actix_web::{
     Error, HttpResponse,
 };
 use futures_util::future::LocalBoxFuture;
+use hyper::Method;
 
 pub struct ApiKeyService {
     pub api_key: String,
@@ -74,21 +75,23 @@ where
     dev::forward_ready!(service);
 
     fn call(&self, request: ServiceRequest) -> Self::Future {
-        if !request.path().starts_with("/auth") && !request.path().starts_with("/validate") {
-            match request.headers().get("API-KEY") {
-                Some(api_key) => {
-                    let Ok(api_key) = api_key.to_str() else {
+        if request.method() != Method::OPTIONS {
+            if !request.path().starts_with("/auth") && !request.path().starts_with("/validate") {
+                match request.headers().get("API-KEY") {
+                    Some(api_key) => {
+                        let Ok(api_key) = api_key.to_str() else {
                     return Self::response_to_string("Api Key Invalid", request);
-                };
+                    };
 
-                    if self.api_key != api_key {
-                        return Self::response_to_string("Api Key Invalid", request);
+                        if self.api_key != api_key {
+                            return Self::response_to_string("Api Key Invalid", request);
+                        }
                     }
-                }
-                None => {
-                    return Self::response_to_string("Api Key Missing", request);
-                }
-            };
+                    None => {
+                        return Self::response_to_string("Api Key Missing", request);
+                    }
+                };
+            }
         }
 
         let res = self.service.call(request);

@@ -1,9 +1,9 @@
-use actix_web::{get, HttpResponse, Responder, web::Data};
+use actix_web::{get, web::Data, HttpResponse, Responder};
 
 use crate::env::Env;
 #[allow(clippy::unused_async)]
 #[get("/auth")]
-async fn auth(env: Data<Env> ) -> impl Responder {
+async fn auth(env: Data<Env>) -> impl Responder {
     HttpResponse::TemporaryRedirect()
         .append_header((
             "Location",
@@ -12,7 +12,6 @@ async fn auth(env: Data<Env> ) -> impl Responder {
                 env.client_id,
                 env.redirect_uri
             )
-            
         ))
         .finish()
 }
