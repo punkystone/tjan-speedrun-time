@@ -68,6 +68,9 @@ async fn main() -> std::io::Result<()> {
             HttpServer::new(move || {
                 App::new()
                     .app_data(QueryConfig::default().error_handler(|_, _| PlaceQueryError.into()))
+                    .wrap(ApiKeyService {
+                        api_key: env.api_key.clone(),
+                    })
                     .wrap(
                         middleware::DefaultHeaders::new()
                             .add(("Access-Control-Allow-Origin", "*"))
@@ -75,9 +78,6 @@ async fn main() -> std::io::Result<()> {
                             .add(("Pragma", "no-cache"))
                             .add(("Expires", "0")),
                     )
-                    .wrap(ApiKeyService {
-                        api_key: env.api_key.clone(),
-                    })
                     .app_data(counter.clone())
                     .app_data(env.clone())
                     .app_data(twitch_repository.clone())
