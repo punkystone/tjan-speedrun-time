@@ -7,6 +7,7 @@ mod repository;
 mod routes;
 mod twitch_repository;
 
+use actix_cors::Cors;
 use actix_web::{
     middleware::{self},
     web::{Data, QueryConfig},
@@ -68,13 +69,12 @@ async fn main() -> std::io::Result<()> {
             HttpServer::new(move || {
                 App::new()
                     .app_data(QueryConfig::default().error_handler(|_, _| PlaceQueryError.into()))
+                    .wrap(Cors::permissive())
                     .wrap(ApiKeyService {
                         api_key: env.api_key.clone(),
                     })
                     .wrap(
                         middleware::DefaultHeaders::new()
-                            .add(("Access-Control-Allow-Origin", "*"))
-                            .add(("Access-Control-Allow-Headers", "API-KEY"))
                             .add(("Cache-Control", "no-cache, no-store, must-revalidate"))
                             .add(("Pragma", "no-cache"))
                             .add(("Expires", "0")),

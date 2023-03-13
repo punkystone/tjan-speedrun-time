@@ -18,6 +18,7 @@ base64 = { version = "0.21.0", default-features = false }
 env_logger = { version = "0.10.0", default-features = false }
 tokio = { version = "1.26.0", default-features = false, features = ["sync"] }
 futures-util = {version="0.3.26", default-features = false }
+actix-cors = "0.6.4"
 
 [profile.release]
 opt-level = 3
