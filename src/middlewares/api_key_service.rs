@@ -74,7 +74,7 @@ where
     dev::forward_ready!(service);
 
     fn call(&self, request: ServiceRequest) -> Self::Future {
-        if request.path() == "/place/decrement" {
+        if request.path().ends_with("/place/decrement") {
             match request.headers().get("API-KEY") {
                 Some(api_key) => {
                     let Ok(api_key) = api_key.to_str() else {
