@@ -74,7 +74,7 @@ where
     dev::forward_ready!(service);
 
     fn call(&self, request: ServiceRequest) -> Self::Future {
-        if !request.path().starts_with("/auth") && !request.path().starts_with("/validate") {
+        if request.path() == "/place/decrement" {
             match request.headers().get("API-KEY") {
                 Some(api_key) => {
                     let Ok(api_key) = api_key.to_str() else {
